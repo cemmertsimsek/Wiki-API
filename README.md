@@ -1,2 +1,3 @@
 # Wiki-API
-Purpose of this project is creating my own RESTfull API
+
+Purpose of this project is creating my own RESTful API
