@@ -60,15 +60,56 @@ app
   });
 
 //////// Requests targeting specific articles //////////
-app.route("/articles/:articleTitle").get((req, res) => {
-  Article.findOne({ title: req.params.articleTitle }, (err, foundArticle) => {
-    if (foundArticle) {
-      res.send(foundArticle);
-    } else {
-      res.send("No articles found");
-    }
+app
+  .route("/articles/:articleTitle")
+  .get((req, res) => {
+    Article.findOne({ title: req.params.articleTitle }, (err, foundArticle) => {
+      if (foundArticle) {
+        res.send(foundArticle);
+      } else {
+        res.send("No articles found");
+      }
+    });
+  })
+
+  .put((req, res) => {
+    Article.replaceOne(
+      //.update() method depreceted
+      { title: req.params.articleTitle },
+      { title: req.body.title, content: req.body.content },
+      function (err) {
+        if (!err) {
+          res.send("Successfully updated");
+        } else {
+          res.send(err);
+        }
+      }
+    );
+  })
+
+  .patch((req, res) => {
+    Article.updateMany(
+      { title: req.params.articleTitle },
+      { $set: req.body }, //picking up the fields that provided updates to from body. updating only the fields that has a value. for ex: title and content together or only for one of them
+      function (err) {
+        if (!err) {
+          res.send("Successfully updated article");
+        } else {
+          res.send(err);
+        }
+      }
+    );
+  })
+
+  .delete((req, res) => {
+    Article.deleteOne({ title: req.params.articleTitle }, function (err) {
+      if (!err) {
+        res.send("Successfully deleted the corresponding article");
+      } else {
+        res.send(err);
+      }
+    });
   });
-});
 
 app.listen(3000, function () {
   console.log("Server started on port 3000");
